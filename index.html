@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+   <title>HangMan</title>
+
+   <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="assets/js/bootstrap.min.js"></script>
+
+
+	<style type="text/css">
+		@font-face {
+			font-family: 'zombie';
+			src: url('assets/fonts/ZOMBIE.eot');
+			src: url('assets/fonts/zg.ttf');
+			format('truetype');
+		}
+
+		#holdchoosenWord {
+			margin: 0 auto;
+			width: 100%;
+			position: relative;
+			text-align: center;
+		}
+
+		#buttons {
+		    position: relative;
+		    bottom: 11px;
+  
+		}
+		.list {
+			display:inline-block;
+			padding-right: 20px;
+    		font-size: 27px;
+
+		}
+	
+		h1 { font-family: 'zombie' !important;
+		font-size: 50px; }
+
+		/* correct letter unorderd list */
+		#correct-letter {
+			list-style-type: none;
+		}
+
+
+		.userGuess {
+		    padding: 10px;
+		    font-family: 'zombie';
+		    font-size: 20px; 
+			display: -webkit-inline-box;
+    		text-align: center;
+		}
+
+		#letter {
+			display:inline-block;
+			padding-right: 20px;
+    		font-size: 27px;
+    		font-size: 17px;
+    		float: left;
+			width: 30px;
+		    height: 30px;
+		    border-style: solid;
+		    padding: 2px;
+		    float: left;
+		    margin: 2px;
+		}
+
+		#alphabet {
+
+		}
+
+		body{
+			background-image: url(assets/images/45893.jpg);
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-repeat: no-repeat;
+		}
+
+		#gameOver{
+			font-size: 29px;
+		}
+		
+		.active {
+			background: blue;
+		}
+		
+
+
+	</style>
+</head>
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+        
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+         
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+
+    <div class="container theme-showcase" id="main" role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>Zombie Apocalypse</h1>
+        <p>A herd of zombies are headed your way! You have 12 chances to guess the word that will save your life!</p>
+      </div>
+
+
+
+      <div class="page-header">
+        <h1>Panels</h1>
+      </div>
+
+      <div class="row" style="background: rgba(255,255,255, 0.8); padding: 20px;">
+
+      	<!--GAME OVER POP UP-->
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h1 class="modal-title" id="myModalLabel" style="text-align: center;">TIMES UP!</h1>
+		      </div>
+		      <div class="modal-body">
+		        <div id="gameOver"></div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn-lg btn-success" data-dismiss="modal">Play Again?</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+
+        <div class="col-sm-4">
+        	<!--WINS-->	
+        	 <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title">WINS</h3>
+            </div>
+            <div class="panel-body">
+				<div id="wins"></div>
+            </div>
+          </div>
+         
+
+          <!--LOSSES-->
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              <h3 class="panel-title">LIVES</h3>
+            </div>
+            <div class="panel-body">
+				<p id="mylives"></p>
+            </div>
+          </div>
+
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Options</h3>
+            </div>
+            <div class="panel-body">
+            	<!--reset button -->
+				<button type="reset" class="btn btn-lg btn-default" id="reset">Reset</button>
+            </div>
+          </div>          
+
+        </div><!-- /.col-sm-4 -->
+
+		 <div class="col-sm-8">
+      		<div class="row" style="">
+      			<div class="col-sm-3">
+      				<div id="buttons"></div> 
+      			</div>
+
+      			<div class="col-sm-8">
+      				<!--hold animation -->
+      				<div class="row" style="height: 260px;"></div>
+		  			<!--place correct letters -->
+			        <div class="row">
+
+						<!--Holds word choosen -->
+						<div id="holdchoosenWord"></div>	
+
+			        </div><!--/row-->
+
+        		</div><!--/col-sm-4-->
+
+      		</div><!--/row-->
+
+
+
+
+	       
+
+
+
+        </div>
+       
+    </div><!--/row-->
+      
+
+
+
+    </div> <!-- /container -->
+
+
+
+
+
+
+
+	<script>
+
+
+	  var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+	        'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+	        't', 'u', 'v', 'w', 'x', 'y', 'z'];
+	  
+	  var zombieDictionary;   // Array of topics
+	  var chosenWord;     // Selected word
+
+	  var zombieWord ;        // Selected word
+	  var userGuess ;         // userGuess - the key entered
+	  var guesses = [ ];      // Stored geusses
+	  var lives ;             // Lives
+	  var counter ;           // Count correct geusses
+	  var space;              // Number of spaces in word '-'
+
+	  // Get elements
+	  var myLives = document.getElementById("mylives"); 
+	  var gameOver = document.getElementById("gameOver");
+
+	  // create alphabet ul
+	  function showAlphabet() {
+	    myAlphabet = document.getElementById('buttons'); // grab the buttons id div
+	    letters = document.createElement('ul'); // create an unordere list called letters
+
+	    for (var i = 0; i < alphabet.length; i++) {
+	      letters.id = 'alphabet'; // add the id alphabet to each letter array
+	      list = document.createElement('li'); //create a list for each letter
+	      list.id = 'letter'; //add an id to the list
+	      list.setAttribute("data-letter", alphabet[i]);
+	      list.innerHTML = alphabet[i]; //place each letter into <li>
+	      survive();  // run this, when user keyups check to see if userGuess is an indexOf the alphabet array
+	      myAlphabet.appendChild(letters); //appending the unordered letters list to the buttons div
+	      letters.appendChild(list); //appending the <li> to the unordered variable letters
+	    }
+	  }
+
+	  // Create guesses ul
+	  // third step
+	  function result () {
+	  	guessTheWord = document.getElementById('holdchoosenWord'); // this will hold the chosen word
+	  	correctLetters =  document.createElement('ul'); // this will create an unordered list that each letter of the chosen word will reside in
+
+	  	for (var i = 0; i < zombieWord.length; i++) {
+	  		correctLetters.setAttribute('id', 'correct-letter'); // sets id of unordered list that holds each of the correct letters
+	  		userGuess = document.createElement('li'); // create a list of keys pressed User Guesses
+	  		userGuess.setAttribute('class', 'userGuess'); // this sets the class for each correct letter in the <li class="userGuess"> 
+	  		if (zombieWord[i] === "-"){
+	  			userGuess.innerHTML = "-";
+	  		} else {
+	  			userGuess.innerHTML = "_____";
+	  		}
+
+	  		guesses.push(userGuess); // adding the user guesses to the array guesses
+	  		guessTheWord.appendChild(correctLetters); //appending the unordered list correct to the div id guessTheWord
+	  		correctLetters.appendChild(userGuess); // apped the <li> letters of the correct word </li> to the <ul> correct letters we created
+	  	}
+
+	  }
+      	
+  // OnKeyup Function
+   function survive () {
+   	document.onkeyup = function ( event ) { 
+   		var userGuess = event.key.toLowerCase(); //captures key pressed //if caps locks is on then it will create a lowercase to use universal
+
+   		var getLetter = document.getElementById('letter'); // grab the buttons id div
+   		var createDiv = document.createElement("div");
+   		createDiv.innerHTML = userGuess;
+   		createDiv.setAttribute('data-letter', userGuess)
+   		createDiv.setAttribute("class", "letter");
+   		list.appendChild(createDiv);
+
+
+
+   		//var guess = list.innerHTML(userGuess);
+   		//console.log("guess");
+   		//console.log(guess);
+		//console.log("test");
+		//console.log(test);
+
+
+   		console.log(userGuess);
+   		console.log("----------------------");
+   		
+   		for (var i = 0; i < zombieWord.length; i++){
+
+   			if (zombieWord[i] === userGuess) {
+   				console.log("yes");
+				console.log("----------------------");
+				guesses[i].innerHTML = userGuess; //replace the _ with the correct guess if the userGuess equals a letter in the zombie chosen word
+				counter += 1;
+
+   			} 
+   		}
+	  	
+
+	  	if (zombieWord.indexOf(userGuess) > -1) { //if users guess matches a letter in the choosen word then it is not false and returns something greater than -1 
+	   			console.log("-----------is user -----------");
+	   			console.log("yes");
+	   			stats(); //if userGuess is correct then call the function to do
+
+	   		} else { // if the users guess does not match a letter in the choosen word then it is false and returns -1...so in this condition we will subtract 1 from are lives
+	   			console.log("no");
+	   			lives -= 1;
+	   			console.log("lives");
+	   			console.log(lives);
+				stats(); //if userGuess is  not correct then call the stats function subtract lives | Also the stats function will tell you if game is over
+	   		}
+  		}
+ 	}
+
+	function stats(){
+		myLives.innerHTML = "You have " + lives + " left";
+		console.log("statlives");
+		console.log(lives);
+		if (lives < 1) {
+			
+			$('#myModal').modal('show');
+			gameOver.innerHTML = "You've been bitten. It's only a matter of time before you become a Zombiefied.";
+
+		}
+
+
+
+	}
+
+ 
+
+	  // Play
+	  function play() {
+	    zombieDictionary = [
+	        ["zombies", "atomic", "undead", "nightmare"]
+	    ];
+
+	    chosenWord = zombieDictionary[Math.floor(Math.random() * zombieDictionary.length)];
+	    zombieWord = chosenWord[Math.floor(Math.random() * chosenWord.length)];
+	    zombieWord = zombieWord.replace(/\s/g, "-");
+	    console.log(zombieWord);
+	    showAlphabet();
+	    guesses = [ ];
+	    lives = 12; // set numer of lives
+	    counter = 0;
+	    space = 0;
+	    result(); // run this function, it takes the user gueses and stores them in an array called guesses and it checks if the userguess
+   	    
+   	    stats(); // this calls the function that determines how many live syou have left, | make sure you call the function after you decalre lives = 12 | also you want to call it in function play so that it will show the initial lives before you start the game. so it declares 12 lives before you even start the game
+
+	  }
+
+	  play();
+	  
+  	// reset
+  	var reset = document.getElementById('reset');
+	reset.onclick = function() {
+		mylives.reset();
+
+
+	    play();
+	 }
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+
+</html>
